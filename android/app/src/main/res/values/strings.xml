@@ -1,0 +1,7 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources>
+    <string name="app_name">Alliance Web3 Africa</string>
+    <string name="title_activity_main">Alliance Web3 Africa</string>
+    <string name="package_name">com.allianceweb3.africa</string>
+    <string name="custom_url_scheme">com.allianceweb3.africa</string>
+</resources>

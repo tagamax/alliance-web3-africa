@@ -1,0 +1,148 @@
+# ═══════════════════════════════════════════════════════
+# Alliance Web3 Africa - Configuration Hostinger
+# Copier ce fichier vers public_html/.htaccess
+# ═══════════════════════════════════════════════════════
+
+# Enable Rewrite Engine
+<IfModule mod_rewrite.c>
+    RewriteEngine On
+    RewriteBase /
+
+    # Force HTTPS (SSL)
+    RewriteCond %{HTTPS} off
+    RewriteRule ^(.*)$ https://%{HTTP_HOST}%{REQUEST_URI} [L,R=301]
+
+    # Redirect www to non-www (optionnel, commenter si non désiré)
+    # RewriteCond %{HTTP_HOST} ^www\.(.*)$ [NC]
+    # RewriteRule ^(.*)$ https://%1/$1 [R=301,L]
+
+    # Handle React Router (SPA Routes)
+    # Crucial pour que /dashboard, /nft, etc. fonctionnent
+    RewriteCond %{REQUEST_FILENAME} !-f
+    RewriteCond %{REQUEST_FILENAME} !-d
+    RewriteCond %{REQUEST_FILENAME} !-l
+    RewriteRule . /index.html [L]
+</IfModule>
+
+# Security Headers
+<IfModule mod_headers.c>
+    # Protection contre XSS
+    Header set X-XSS-Protection "1; mode=block"
+
+    # Empêcher MIME type sniffing
+    Header set X-Content-Type-Options "nosniff"
+
+    # Protection contre clickjacking
+    Header set X-Frame-Options "DENY"
+
+    # Referrer Policy
+    Header set Referrer-Policy "strict-origin-when-cross-origin"
+
+    # Content Security Policy (ajuster selon besoins)
+    Header set Content-Security-Policy "default-src 'self' https://zmfjlqmtfguvnmuzoztf.supabase.co; script-src 'self' 'unsafe-inline' 'unsafe-eval'; style-src 'self' 'unsafe-inline'; img-src 'self' data: https:; font-src 'self' data:; connect-src 'self' https://zmfjlqmtfguvnmuzoztf.supabase.co wss://zmfjlqmtfguvnmuzoztf.supabase.co;"
+
+    # Permissions Policy
+    Header set Permissions-Policy "camera=(), microphone=(), geolocation=()"
+</IfModule>
+
+# Service Worker Configuration
+<FilesMatch "sw\.js$">
+    <IfModule mod_headers.c>
+        # Ne pas cacher le service worker
+        Header set Cache-Control "public, max-age=0, must-revalidate"
+        Header set Service-Worker-Allowed "/"
+    </IfModule>
+</FilesMatch>
+
+# Manifest.json
+<FilesMatch "manifest\.json$">
+    <IfModule mod_headers.c>
+        Header set Content-Type "application/manifest+json"
+    </IfModule>
+</FilesMatch>
+
+# Compression Gzip
+<IfModule mod_deflate.c>
+    AddOutputFilterByType DEFLATE text/html
+    AddOutputFilterByType DEFLATE text/plain
+    AddOutputFilterByType DEFLATE text/xml
+    AddOutputFilterByType DEFLATE text/css
+    AddOutputFilterByType DEFLATE text/javascript
+    AddOutputFilterByType DEFLATE application/javascript
+    AddOutputFilterByType DEFLATE application/json
+    AddOutputFilterByType DEFLATE application/xml
+    AddOutputFilterByType DEFLATE image/svg+xml
+</IfModule>
+
+# Browser Caching
+<IfModule mod_expires.c>
+    ExpiresActive On
+
+    # Images - Cache 1 an
+    ExpiresByType image/jpeg "access plus 1 year"
+    ExpiresByType image/png "access plus 1 year"
+    ExpiresByType image/gif "access plus 1 year"
+    ExpiresByType image/svg+xml "access plus 1 year"
+    ExpiresByType image/webp "access plus 1 year"
+    ExpiresByType image/x-icon "access plus 1 year"
+
+    # CSS et JavaScript - Cache 1 mois
+    ExpiresByType text/css "access plus 1 month"
+    ExpiresByType application/javascript "access plus 1 month"
+    ExpiresByType text/javascript "access plus 1 month"
+
+    # HTML - Pas de cache (pour updates instantanées)
+    ExpiresByType text/html "access plus 0 seconds"
+
+    # Fonts - Cache 1 an
+    ExpiresByType font/woff "access plus 1 year"
+    ExpiresByType font/woff2 "access plus 1 year"
+    ExpiresByType font/ttf "access plus 1 year"
+    ExpiresByType font/otf "access plus 1 year"
+
+    # JSON - Pas de cache
+    ExpiresByType application/json "access plus 0 seconds"
+
+    # Manifest - Cache court
+    ExpiresByType application/manifest+json "access plus 1 week"
+</IfModule>
+
+# Désactiver le listing de répertoires
+Options -Indexes
+
+# Suivre les liens symboliques (si nécessaire)
+# Options +FollowSymLinks
+
+# Protection des fichiers sensibles
+<FilesMatch "^\.">
+    Order allow,deny
+    Deny from all
+</FilesMatch>
+
+# Protéger .env si présent (ne devrait pas l'être)
+<Files ".env">
+    Order allow,deny
+    Deny from all
+</Files>
+
+# Protéger autres fichiers de config
+<FilesMatch "\.(htaccess|htpasswd|ini|log|sh|sql|bak)$">
+    Order allow,deny
+    Deny from all
+</FilesMatch>
+
+# UTF-8 Encoding
+AddDefaultCharset UTF-8
+
+# Mime Types (si nécessaire)
+<IfModule mod_mime.c>
+    AddType application/javascript js
+    AddType application/json json
+    AddType image/svg+xml svg svgz
+    AddType font/woff woff
+    AddType font/woff2 woff2
+</IfModule>
+
+# ═══════════════════════════════════════════════════════
+# Fin de configuration
+# ═══════════════════════════════════════════════════════

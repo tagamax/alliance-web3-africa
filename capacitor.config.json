@@ -1,0 +1,9 @@
+{
+  "appId": "com.allianceweb3.africa",
+  "appName": "Alliance Web3 Africa",
+  "webDir": "dist",
+  "server": {
+    "androidScheme": "https",
+    "iosScheme": "https"
+  }
+}
